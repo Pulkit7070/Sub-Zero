@@ -9,6 +9,7 @@ import {
   TrendingDown,
   CreditCard,
   CheckCircle2,
+  Zap,
 } from "lucide-react";
 import Layout from "@/components/Layout";
 import ActionCard from "@/components/ActionCard";
@@ -98,7 +99,6 @@ export default function DashboardPage() {
   ) => {
     await api.actOnDecision(decisionId, action);
     setDecisions((prev) => prev.filter((d) => d.id !== decisionId));
-    // Reload stats
     const newStats = await api.getDecisionStats();
     setStats(newStats);
   };
@@ -107,7 +107,7 @@ export default function DashboardPage() {
     return (
       <Layout>
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+          <div className="w-12 h-12 rounded-full border-2 border-sky-500/30 border-t-sky-500 animate-spin"></div>
         </div>
       </Layout>
     );
@@ -118,8 +118,8 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600">
+          <h1 className="text-3xl font-bold text-white mb-1">Dashboard</h1>
+          <p className="text-slate-400">
             Welcome back{user?.email ? `, ${user.email.split("@")[0]}` : ""}!
           </p>
         </div>
@@ -146,66 +146,66 @@ export default function DashboardPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+        <div className="glass-card border-red-500/30 bg-red-500/10 text-red-400 px-4 py-3 mb-6">
           {error}
         </div>
       )}
 
       {/* Stats */}
       <div className="grid grid-cols-4 gap-4 mb-8">
-        <div className="card">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
-              <CreditCard className="w-5 h-5 text-primary-600" />
+        <div className="gradient-card group hover:scale-[1.02] transition-transform duration-300">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-sky-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <CreditCard className="w-6 h-6 text-sky-400" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Pending Actions</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-sm text-slate-400">Pending Actions</p>
+              <p className="text-2xl font-bold text-white">
                 {stats?.pending_decisions || 0}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="card">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-              <CheckCircle2 className="w-5 h-5 text-green-600" />
+        <div className="gradient-card group hover:scale-[1.02] transition-transform duration-300">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <CheckCircle2 className="w-6 h-6 text-emerald-400" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Actions Taken</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-sm text-slate-400">Actions Taken</p>
+              <p className="text-2xl font-bold text-white">
                 {stats?.accepted_decisions || 0}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="card">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-              <TrendingDown className="w-5 h-5 text-amber-600" />
+        <div className="gradient-card group hover:scale-[1.02] transition-transform duration-300">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <TrendingDown className="w-6 h-6 text-amber-400" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Potential Savings</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-sm text-slate-400">Potential Savings</p>
+              <p className="text-2xl font-bold text-white">
                 {formatCurrency(stats?.potential_savings_cents || 0)}
-                <span className="text-sm text-gray-500 font-normal">/mo</span>
+                <span className="text-sm text-slate-500 font-normal">/mo</span>
               </p>
             </div>
           </div>
         </div>
 
-        <div className="card">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
-              <DollarSign className="w-5 h-5 text-emerald-600" />
+        <div className="gradient-card group hover:scale-[1.02] transition-transform duration-300">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <DollarSign className="w-6 h-6 text-green-400" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Actual Savings</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-sm text-slate-400">Actual Savings</p>
+              <p className="text-2xl font-bold text-white">
                 {formatCurrency(stats?.actual_savings_cents || 0)}
-                <span className="text-sm text-gray-500 font-normal">/mo</span>
+                <span className="text-sm text-slate-500 font-normal">/mo</span>
               </p>
             </div>
           </div>
@@ -214,17 +214,20 @@ export default function DashboardPage() {
 
       {/* Action Feed */}
       <div className="mb-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+          <Zap className="w-5 h-5 text-amber-400" />
           Recommended Actions
         </h2>
 
         {decisions.length === 0 ? (
-          <div className="card text-center py-12">
-            <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <div className="glass-card text-center py-16">
+            <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 flex items-center justify-center mx-auto mb-5">
+              <CheckCircle2 className="w-8 h-8 text-emerald-400" />
+            </div>
+            <h3 className="text-xl font-semibold text-white mb-2">
               All caught up!
             </h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-slate-400 mb-6 max-w-md mx-auto">
               No pending recommendations. Sync your Gmail or generate new
               recommendations to get started.
             </p>

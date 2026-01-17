@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { RefreshCw, Search, Filter, CreditCard } from "lucide-react";
+import { RefreshCw, Search, Filter, CreditCard, Inbox } from "lucide-react";
 import Layout from "@/components/Layout";
 import SubscriptionRow from "@/components/SubscriptionRow";
 import { api, Subscription, formatCurrency } from "@/lib/api";
@@ -39,12 +39,11 @@ export default function SubscriptionsPage() {
   };
 
   const handleSync = async () => {
-    const force = true; // Always do full sync
+    const force = true;
     try {
       setSyncing(true);
       setError(null);
-      const result = await api.syncSubscriptions(90, force);  // 90 days max
-      const syncType = result.is_incremental ? "incremental" : "full";
+      const result = await api.syncSubscriptions(90, force);
       alert(
         `Sync complete! Found ${result.subscriptions_found} subscriptions (${result.new_subscriptions} new, ${result.updated_subscriptions} updated)\n` +
         `Processed ${result.emails_processed} emails, skipped ${result.emails_skipped} already processed`
@@ -63,7 +62,6 @@ export default function SubscriptionsPage() {
     setSubscriptions((prev) => prev.filter((s) => s.id !== id));
   };
 
-  // Filter subscriptions
   const filteredSubscriptions = subscriptions.filter((sub) => {
     const matchesSearch = sub.vendor_name
       .toLowerCase()
@@ -73,13 +71,11 @@ export default function SubscriptionsPage() {
     return matchesSearch && matchesStatus;
   });
 
-  // Calculate totals
   const activeSubscriptions = subscriptions.filter(
     (s) => s.status === "active"
   );
   const monthlyTotal = activeSubscriptions.reduce((sum, s) => {
     if (!s.amount_cents) return sum;
-    // Convert yearly to monthly
     if (s.billing_cycle === "yearly") {
       return sum + Math.round(s.amount_cents / 12);
     }
@@ -90,7 +86,7 @@ export default function SubscriptionsPage() {
     return (
       <Layout>
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+          <div className="w-12 h-12 rounded-full border-2 border-sky-500/30 border-t-sky-500 animate-spin"></div>
         </div>
       </Layout>
     );
@@ -101,10 +97,10 @@ export default function SubscriptionsPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Subscriptions</h1>
-          <p className="text-gray-600">
+          <h1 className="text-3xl font-bold text-white mb-1">Subscriptions</h1>
+          <p className="text-slate-400">
             {activeSubscriptions.length} active subscriptions totaling{" "}
-            {formatCurrency(monthlyTotal)}/month
+            <span className="text-emerald-400 font-semibold">{formatCurrency(monthlyTotal)}/month</span>
           </p>
         </div>
         <button
@@ -118,7 +114,7 @@ export default function SubscriptionsPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+        <div className="glass-card border-red-500/30 bg-red-500/10 text-red-400 px-4 py-3 mb-6">
           {error}
         </div>
       )}
@@ -126,17 +122,17 @@ export default function SubscriptionsPage() {
       {/* Filters */}
       <div className="flex items-center gap-4 mb-6">
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-500" />
           <input
             type="text"
             placeholder="Search subscriptions..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="input pl-10"
+            className="input pl-12"
           />
         </div>
         <div className="flex items-center gap-2">
-          <Filter className="w-5 h-5 text-gray-400" />
+          <Filter className="w-5 h-5 text-slate-500" />
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
@@ -152,12 +148,14 @@ export default function SubscriptionsPage() {
 
       {/* Table */}
       {filteredSubscriptions.length === 0 ? (
-        <div className="card text-center py-12">
-          <CreditCard className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+        <div className="glass-card text-center py-16">
+          <div className="w-16 h-16 rounded-2xl bg-slate-500/20 flex items-center justify-center mx-auto mb-5">
+            <Inbox className="w-8 h-8 text-slate-400" />
+          </div>
+          <h3 className="text-xl font-semibold text-white mb-2">
             No subscriptions found
           </h3>
-          <p className="text-gray-600 mb-4">
+          <p className="text-slate-400 mb-6 max-w-md mx-auto">
             {subscriptions.length === 0
               ? "Sync your Gmail to find your subscriptions automatically."
               : "Try adjusting your search or filter."}
@@ -176,31 +174,31 @@ export default function SubscriptionsPage() {
           )}
         </div>
       ) : (
-        <div className="card p-0 overflow-hidden">
+        <div className="glass-card p-0 overflow-hidden">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <thead>
+              <tr className="border-b border-white/5">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
                   Subscription
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
                   Amount
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
                   Last Charged
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
                   Next Renewal
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-white/5">
               {filteredSubscriptions.map((subscription) => (
                 <SubscriptionRow
                   key={subscription.id}
