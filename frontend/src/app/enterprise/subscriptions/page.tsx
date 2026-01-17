@@ -20,8 +20,10 @@ import {
   formatCurrency,
   formatPercent,
 } from "@/lib/enterprise-api";
+import { useDemoData } from "@/lib/demo-data";
 
 const ORG_ID = "demo-org-id";
+const USE_DEMO_DATA = true;
 
 export default function SubscriptionsPage() {
   const [subscriptions, setSubscriptions] = useState<ToolSubscription[]>([]);
@@ -39,6 +41,47 @@ export default function SubscriptionsPage() {
   const loadData = async () => {
     try {
       setLoading(true);
+      
+      if (USE_DEMO_DATA) {
+        const demoData = useDemoData();
+        let filteredSubs = demoData.subscriptions;
+        
+        if (statusFilter !== "all") {
+          filteredSubs = filteredSubs.filter(s => s.status === statusFilter);
+        }
+        if (renewalFilter) {
+          filteredSubs = filteredSubs.filter(s => 
+            s.days_until_renewal && s.days_until_renewal <= renewalFilter
+          );
+        }
+        
+        setSubscriptions(filteredSubs);
+        
+        // Calculate spend summary from demo data
+        const totalMonthly = demoData.subscriptions.reduce((sum, s) => 
+          sum + (s.amount_cents || 0) / (s.billing_cycle === "annual" ? 12 : 1), 0
+        );
+        const totalAnnual = demoData.subscriptions.reduce((sum, s) => 
+          sum + (s.amount_cents || 0) * (s.billing_cycle === "monthly" ? 12 : 1), 0
+        );
+        
+        setSpendSummary({
+          total_monthly_cents: totalMonthly,
+          total_annual_cents: totalAnnual,
+          by_category: {},
+          by_department: {}
+        });
+        
+        // Upcoming renewals
+        const upcoming = demoData.subscriptions
+          .filter(s => s.days_until_renewal && s.days_until_renewal <= 60)
+          .sort((a, b) => (a.days_until_renewal || 0) - (b.days_until_renewal || 0));
+        setUpcomingRenewals(upcoming);
+        
+        setLoading(false);
+        return;
+      }
+      
       const params: any = { page_size: 100 };
       if (statusFilter !== "all") params.status = statusFilter;
       if (renewalFilter) params.renewal_within_days = renewalFilter;
@@ -82,6 +125,26 @@ export default function SubscriptionsPage() {
   return (
     <EnterpriseLayout>
       <div className="space-y-6">
+        {/* Demo Banner */}
+        {USE_DEMO_DATA && (
+          <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-4">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0">
+                <CreditCard className="w-5 h-5 text-green-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-gray-900 mb-1">
+                  Demo: Subscription Management
+                </h3>
+                <p className="text-sm text-gray-600">
+                  View all company subscriptions with real-time utilization tracking, renewal alerts, 
+                  and automated optimization suggestions. Demo showing Slack, Figma, Zoom, GitHub, and Notion.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+        
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>

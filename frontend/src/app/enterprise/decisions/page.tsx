@@ -24,9 +24,11 @@ import {
   formatCurrency,
   formatPercent,
 } from "@/lib/enterprise-api";
+import { useDemoData } from "@/lib/demo-data";
 
 const ORG_ID = "demo-org-id";
 const CURRENT_USER_ID = "demo-user-id"; // In real app, get from auth
+const USE_DEMO_DATA = true;
 
 const DECISION_TYPES = {
   keep: { label: "Keep", color: "bg-green-100 text-green-700", icon: CheckCircle },
@@ -58,6 +60,32 @@ export default function DecisionsPage() {
   const loadDecisions = async () => {
     try {
       setLoading(true);
+      
+      if (USE_DEMO_DATA) {
+        const demoData = useDemoData();
+        let filteredDecisions = demoData.decisions;
+        
+        if (statusFilter !== "all") {
+          filteredDecisions = filteredDecisions.filter(d => d.status === statusFilter);
+        }
+        if (typeFilter !== "all") {
+          filteredDecisions = filteredDecisions.filter(d => d.decision_type === typeFilter);
+        }
+        
+        setDecisions(filteredDecisions);
+        setPendingData({
+          total_pending: demoData.decisions.filter(d => d.status === "pending").length,
+          total_potential_savings_cents: demoData.decisions.reduce((sum, d) => sum + d.savings_potential_cents, 0),
+          by_priority: {
+            high: demoData.decisions.filter(d => d.priority === "high"),
+            medium: demoData.decisions.filter(d => d.priority === "medium"),
+            low: demoData.decisions.filter(d => d.priority === "low"),
+          }
+        });
+        setLoading(false);
+        return;
+      }
+      
       const params: any = { page_size: 100 };
       if (statusFilter !== "all") params.status = statusFilter;
       if (typeFilter !== "all") params.decision_type = typeFilter;
@@ -81,6 +109,22 @@ export default function DecisionsPage() {
 
     try {
       setAnalyzing(true);
+      
+      if (USE_DEMO_DATA) {
+        // Simulate analysis with demo data
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        const demoData = useDemoData();
+        alert(`Analysis complete! Created ${demoData.decisions.length} decision recommendations.\n\n` +
+              `💡 Quick Wins Found:\n` +
+              `• Reduce Slack licenses: Save $1,920/month\n` +
+              `• Cancel unused Figma seats: Save $1,440/month\n` +
+              `• Downgrade Zoom plan: Save $950/month\n\n` +
+              `Total Potential Savings: $${(demoData.stats.potential_savings_cents / 100).toLocaleString()}/month`);
+        loadDecisions();
+        setAnalyzing(false);
+        return;
+      }
+      
       const result = await decisionsAPI.analyzeAll(ORG_ID);
       alert(`Analysis complete! Created ${result.decisions_created} decision recommendations.`);
       loadDecisions();
@@ -259,6 +303,26 @@ export default function DecisionsPage() {
   return (
     <EnterpriseLayout pendingDecisions={pendingData?.total_pending || 0}>
       <div className="space-y-6">
+        {/* Demo Banner */}
+        {USE_DEMO_DATA && (
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                <Zap className="w-5 h-5 text-blue-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-gray-900 mb-1">
+                  Demo: AI-Powered Decision Engine
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Click &quot;Run Analysis&quot; to see how our AI analyzes subscription usage patterns, 
+                  identifies inactive users, and generates cost-saving recommendations with confidence scores.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+        
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>

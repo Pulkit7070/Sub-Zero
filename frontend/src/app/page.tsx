@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Snowflake, Mail, DollarSign, TrendingDown, CheckCircle, Shield, ArrowRight } from "lucide-react";
+import { Snowflake, Mail, DollarSign, TrendingDown, CheckCircle, Shield, ArrowRight, Building2 } from "lucide-react";
 import { api } from "@/lib/api";
 
 export default function LandingPage() {
@@ -51,16 +51,52 @@ export default function LandingPage() {
             Get smart recommendations and save money on services you don&apos;t use.
           </p>
 
-          <a
-            href={api.getLoginUrl()}
-            className="btn-primary inline-flex items-center gap-2 px-6 py-3"
-          >
-            <Mail className="w-4 h-4" />
-            Connect Gmail to Get Started
-            <ArrowRight className="w-4 h-4" />
-          </a>
+          {/* Personal vs Enterprise Choice */}
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-8">
+            {/* Personal */}
+            <div className="card hover:border-blue-500/50 transition-all cursor-pointer group">
+              <div className="p-6">
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-4 mx-auto">
+                  <Mail className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold text-zinc-100 mb-2">Personal</h3>
+                <p className="text-zinc-400 text-sm mb-4">
+                  Manage your personal subscriptions with AI-powered insights
+                </p>
+                <a
+                  href={api.getLoginUrl()}
+                  className="btn-primary inline-flex items-center gap-2 px-4 py-2 w-full justify-center group-hover:bg-blue-600"
+                >
+                  <Mail className="w-4 h-4" />
+                  Connect Gmail
+                  <ArrowRight className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
 
-          <div className="flex items-center justify-center gap-6 mt-6 text-sm text-zinc-500">
+            {/* Enterprise */}
+            <div className="card hover:border-purple-500/50 transition-all cursor-pointer group">
+              <div className="p-6">
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center mb-4 mx-auto">
+                  <Building2 className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold text-zinc-100 mb-2">Enterprise</h3>
+                <p className="text-zinc-400 text-sm mb-4">
+                  Centralized control for your organization&apos;s subscriptions
+                </p>
+                <a
+                  href="/enterprise"
+                  className="btn-primary inline-flex items-center gap-2 px-4 py-2 w-full justify-center bg-purple-500 hover:bg-purple-600 group-hover:bg-purple-600"
+                >
+                  <Building2 className="w-4 h-4" />
+                  View Demo
+                  <ArrowRight className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-center gap-6 text-sm text-zinc-500">
             <div className="flex items-center gap-1.5">
               <Shield className="w-4 h-4" />
               <span>Read-only access</span>
