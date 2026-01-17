@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { RefreshCw, Search, Filter, CreditCard, Inbox } from "lucide-react";
+import { RefreshCw, Search, Filter, Inbox } from "lucide-react";
 import Layout from "@/components/Layout";
 import SubscriptionRow from "@/components/SubscriptionRow";
 import { api, Subscription, formatCurrency } from "@/lib/api";
@@ -86,7 +86,7 @@ export default function SubscriptionsPage() {
     return (
       <Layout>
         <div className="flex items-center justify-center h-64">
-          <div className="w-12 h-12 rounded-full border-2 border-sky-500/30 border-t-sky-500 animate-spin"></div>
+          <div className="w-8 h-8 rounded-full border-2 border-zinc-700 border-t-blue-500 animate-spin"></div>
         </div>
       </Layout>
     );
@@ -95,12 +95,12 @@ export default function SubscriptionsPage() {
   return (
     <Layout>
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-1">Subscriptions</h1>
-          <p className="text-slate-400">
-            {activeSubscriptions.length} active subscriptions totaling{" "}
-            <span className="text-emerald-400 font-semibold">{formatCurrency(monthlyTotal)}/month</span>
+          <h1 className="text-2xl font-semibold text-zinc-100">Subscriptions</h1>
+          <p className="text-zinc-500 text-sm">
+            {activeSubscriptions.length} active totaling{" "}
+            <span className="text-zinc-300">{formatCurrency(monthlyTotal)}/month</span>
           </p>
         </div>
         <button
@@ -114,25 +114,25 @@ export default function SubscriptionsPage() {
       </div>
 
       {error && (
-        <div className="glass-card border-red-500/30 bg-red-500/10 text-red-400 px-4 py-3 mb-6">
+        <div className="card border-red-500/30 bg-red-500/10 text-red-400 px-4 py-3 mb-4">
           {error}
         </div>
       )}
 
       {/* Filters */}
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex items-center gap-3 mb-4">
         <div className="flex-1 relative">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-500" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-zinc-500" />
           <input
             type="text"
             placeholder="Search subscriptions..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="input pl-12"
+            className="input pl-9"
           />
         </div>
         <div className="flex items-center gap-2">
-          <Filter className="w-5 h-5 text-slate-500" />
+          <Filter className="w-4 h-4 text-zinc-500" />
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
@@ -148,14 +148,14 @@ export default function SubscriptionsPage() {
 
       {/* Table */}
       {filteredSubscriptions.length === 0 ? (
-        <div className="glass-card text-center py-16">
-          <div className="w-16 h-16 rounded-2xl bg-slate-500/20 flex items-center justify-center mx-auto mb-5">
-            <Inbox className="w-8 h-8 text-slate-400" />
+        <div className="card text-center py-12">
+          <div className="w-10 h-10 rounded-lg bg-zinc-800 flex items-center justify-center mx-auto mb-3">
+            <Inbox className="w-5 h-5 text-zinc-400" />
           </div>
-          <h3 className="text-xl font-semibold text-white mb-2">
+          <h3 className="text-lg font-medium text-zinc-100 mb-1">
             No subscriptions found
           </h3>
-          <p className="text-slate-400 mb-6 max-w-md mx-auto">
+          <p className="text-zinc-500 text-sm mb-4 max-w-sm mx-auto">
             {subscriptions.length === 0
               ? "Sync your Gmail to find your subscriptions automatically."
               : "Try adjusting your search or filter."}
@@ -174,31 +174,31 @@ export default function SubscriptionsPage() {
           )}
         </div>
       ) : (
-        <div className="glass-card p-0 overflow-hidden">
+        <div className="card p-0 overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-white/5">
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
+              <tr className="border-b border-zinc-800">
+                <th className="px-4 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
                   Subscription
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
                   Amount
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
                   Last Charged
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
                   Next Renewal
                 </th>
-                <th className="px-6 py-4 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                <th className="px-4 py-3 text-right text-xs font-medium text-zinc-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-zinc-800">
               {filteredSubscriptions.map((subscription) => (
                 <SubscriptionRow
                   key={subscription.id}

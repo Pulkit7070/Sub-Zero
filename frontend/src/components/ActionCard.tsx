@@ -20,39 +20,27 @@ interface ActionCardProps {
 const decisionStyles = {
   cancel: {
     icon: XCircle,
-    gradient: "from-red-500/20 to-red-500/5",
-    iconColor: "text-red-400",
-    border: "border-red-500/30",
     badge: "badge-danger",
     label: "Consider Cancelling",
-    primaryBtn: "bg-red-500 hover:bg-red-600",
+    primaryBtn: "bg-red-600 hover:bg-red-500",
   },
   review: {
     icon: AlertTriangle,
-    gradient: "from-amber-500/20 to-amber-500/5",
-    iconColor: "text-amber-400",
-    border: "border-amber-500/30",
     badge: "badge-warning",
     label: "Review Usage",
-    primaryBtn: "bg-amber-500 hover:bg-amber-600",
+    primaryBtn: "bg-amber-600 hover:bg-amber-500",
   },
   remind: {
     icon: Bell,
-    gradient: "from-sky-500/20 to-sky-500/5",
-    iconColor: "text-sky-400",
-    border: "border-sky-500/30",
-    badge: "bg-sky-500/15 text-sky-400 border border-sky-500/30",
+    badge: "bg-blue-500/10 text-blue-400 border border-blue-500/20",
     label: "Renewal Reminder",
-    primaryBtn: "bg-sky-500 hover:bg-sky-600",
+    primaryBtn: "bg-blue-600 hover:bg-blue-500",
   },
   keep: {
     icon: CheckCircle,
-    gradient: "from-emerald-500/20 to-emerald-500/5",
-    iconColor: "text-emerald-400",
-    border: "border-emerald-500/30",
     badge: "badge-success",
     label: "Keep Active",
-    primaryBtn: "bg-emerald-500 hover:bg-emerald-600",
+    primaryBtn: "bg-emerald-600 hover:bg-emerald-500",
   },
 };
 
@@ -75,68 +63,62 @@ export default function ActionCard({ decision, onAction }: ActionCardProps) {
   };
 
   return (
-    <div className={`glass-card ${style.border} hover:scale-[1.01] transition-transform duration-300`}>
-      <div className="flex items-start gap-4">
+    <div className="card">
+      <div className="flex items-start gap-3">
         {/* Icon */}
-        <div
-          className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${style.gradient} flex items-center justify-center flex-shrink-0`}
-        >
-          <Icon className={`w-7 h-7 ${style.iconColor}`} />
+        <div className="w-9 h-9 rounded-lg bg-zinc-800 flex items-center justify-center flex-shrink-0">
+          <Icon className="w-4 h-4 text-zinc-400" />
         </div>
 
         {/* Content */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-2 mb-2">
-            <h3 className="font-semibold text-white text-lg truncate">
+          <div className="flex items-start justify-between gap-2 mb-1">
+            <h3 className="font-medium text-zinc-100 truncate">
               {subscription?.vendor_name || "Unknown Subscription"}
             </h3>
-            <span
-              className={`px-3 py-1 rounded-full text-xs font-medium ${style.badge} flex-shrink-0`}
-            >
+            <span className={`px-2 py-0.5 rounded text-xs font-medium ${style.badge} flex-shrink-0`}>
               {style.label}
             </span>
           </div>
 
           {/* Subscription details */}
-          <div className="flex items-center gap-3 text-sm text-slate-400 mb-3">
+          <div className="flex items-center gap-2 text-sm text-zinc-500 mb-2">
             {subscription?.amount_cents && (
-              <span className="font-medium text-white">
+              <span className="text-zinc-300">
                 {formatCurrency(subscription.amount_cents, subscription.currency)}
                 {subscription.billing_cycle && `/${subscription.billing_cycle}`}
               </span>
             )}
             {subscription?.source && (
-              <span className="text-slate-500">
-                via {subscription.source}
-              </span>
+              <span>via {subscription.source}</span>
             )}
           </div>
 
           {/* Reason */}
-          <p className="text-sm text-slate-400 mb-5">{decision.reason}</p>
+          <p className="text-sm text-zinc-500 mb-4">{decision.reason}</p>
 
           {/* Actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             {decision.decision_type === "cancel" && (
               <>
                 <button
                   onClick={() => handleAction("accepted")}
                   disabled={loading !== null}
-                  className={`inline-flex items-center gap-2 px-4 py-2 ${style.primaryBtn} text-white text-sm font-medium rounded-xl transition-all duration-200 disabled:opacity-50`}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 ${style.primaryBtn} text-white text-sm font-medium rounded-md transition-colors disabled:opacity-50`}
                 >
                   {loading === "accepted" ? (
-                    <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></div>
+                    <div className="w-3 h-3 rounded-full border-2 border-white/30 border-t-white animate-spin"></div>
                   ) : (
-                    <Check className="w-4 h-4" />
+                    <Check className="w-3 h-3" />
                   )}
                   Cancel it
                 </button>
                 <button
                   onClick={() => handleAction("rejected")}
                   disabled={loading !== null}
-                  className="btn-secondary inline-flex items-center gap-2 text-sm py-2"
+                  className="btn-secondary inline-flex items-center gap-1.5 text-sm py-1.5 px-3"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-3 h-3" />
                   Keep it
                 </button>
               </>
@@ -147,21 +129,21 @@ export default function ActionCard({ decision, onAction }: ActionCardProps) {
                 <button
                   onClick={() => handleAction("accepted")}
                   disabled={loading !== null}
-                  className={`inline-flex items-center gap-2 px-4 py-2 ${style.primaryBtn} text-white text-sm font-medium rounded-xl transition-all duration-200 disabled:opacity-50`}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 ${style.primaryBtn} text-white text-sm font-medium rounded-md transition-colors disabled:opacity-50`}
                 >
                   {loading === "accepted" ? (
-                    <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></div>
+                    <div className="w-3 h-3 rounded-full border-2 border-white/30 border-t-white animate-spin"></div>
                   ) : (
-                    <Check className="w-4 h-4" />
+                    <Check className="w-3 h-3" />
                   )}
                   Will review
                 </button>
                 <button
                   onClick={() => handleAction("snoozed")}
                   disabled={loading !== null}
-                  className="btn-secondary inline-flex items-center gap-2 text-sm py-2"
+                  className="btn-secondary inline-flex items-center gap-1.5 text-sm py-1.5 px-3"
                 >
-                  <Clock className="w-4 h-4" />
+                  <Clock className="w-3 h-3" />
                   Remind later
                 </button>
               </>
@@ -172,21 +154,21 @@ export default function ActionCard({ decision, onAction }: ActionCardProps) {
                 <button
                   onClick={() => handleAction("accepted")}
                   disabled={loading !== null}
-                  className={`inline-flex items-center gap-2 px-4 py-2 ${style.primaryBtn} text-white text-sm font-medium rounded-xl transition-all duration-200 disabled:opacity-50`}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 ${style.primaryBtn} text-white text-sm font-medium rounded-md transition-colors disabled:opacity-50`}
                 >
                   {loading === "accepted" ? (
-                    <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></div>
+                    <div className="w-3 h-3 rounded-full border-2 border-white/30 border-t-white animate-spin"></div>
                   ) : (
-                    <Check className="w-4 h-4" />
+                    <Check className="w-3 h-3" />
                   )}
                   Got it
                 </button>
                 <button
                   onClick={() => handleAction("snoozed")}
                   disabled={loading !== null}
-                  className="btn-secondary inline-flex items-center gap-2 text-sm py-2"
+                  className="btn-secondary inline-flex items-center gap-1.5 text-sm py-1.5 px-3"
                 >
-                  <Clock className="w-4 h-4" />
+                  <Clock className="w-3 h-3" />
                   Snooze
                 </button>
               </>

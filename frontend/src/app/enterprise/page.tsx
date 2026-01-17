@@ -24,9 +24,11 @@ import {
   formatCurrency,
   formatPercent,
 } from "@/lib/enterprise-api";
+import { useDemoData } from "@/lib/demo-data";
 
 // Demo org ID - in real app, get from auth context
 const ORG_ID = "demo-org-id";
+const USE_DEMO_DATA = true; // Set to false when backend is ready
 
 interface QuickWin {
   type: string;
@@ -62,6 +64,30 @@ export default function EnterpriseDashboard() {
   const loadDashboard = async () => {
     try {
       setLoading(true);
+
+      if (USE_DEMO_DATA) {
+        // Use demo data
+        const demoData = useDemoData();
+        setStats(demoData.stats);
+        setQuickWins(demoData.quickWins as any);
+        setUtilization(demoData.utilizationSummary);
+        
+        // Create category breakdown from demo subscriptions
+        const categoryBreakdown: Record<string, { monthly_spend_cents: number; tool_count: number }> = {};
+        demoData.tools.forEach(tool => {
+          const category = tool.category || "Other";
+          if (!categoryBreakdown[category]) {
+            categoryBreakdown[category] = { monthly_spend_cents: 0, tool_count: 0 };
+          }
+          categoryBreakdown[category].monthly_spend_cents += (tool.monthly_cost || 0) * 100;
+          categoryBreakdown[category].tool_count += 1;
+        });
+        setCategorySpend(categoryBreakdown);
+        setPendingCount(demoData.decisions.length);
+        
+        setLoading(false);
+        return;
+      }
 
       // Load all dashboard data in parallel
       const [statsData, quickWinsData, utilizationData, categoryData, pendingData] = await Promise.all([
@@ -132,6 +158,26 @@ export default function EnterpriseDashboard() {
   return (
     <EnterpriseLayout pendingDecisions={pendingCount}>
       <div className="space-y-6">
+        {/* Demo Banner */}
+        {USE_DEMO_DATA && (
+          <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-4">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
+                <Zap className="w-5 h-5 text-purple-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-gray-900 mb-1">
+                  Demo Mode - Explore Enterprise Features
+                </h3>
+                <p className="text-sm text-gray-600">
+                  You&apos;re viewing a demo dashboard for Acme Corporation with sample data. 
+                  Connect your organization to see real subscription data and AI-powered insights.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
