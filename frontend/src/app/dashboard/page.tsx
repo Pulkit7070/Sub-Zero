@@ -9,13 +9,10 @@ import {
   TrendingDown,
   CreditCard,
   CheckCircle2,
-  Zap,
-  Flame,
   AlertTriangle,
   Clock,
   TrendingUp,
   Layers,
-  X,
 } from "lucide-react";
 import Layout from "@/components/Layout";
 import ActionCard from "@/components/ActionCard";
@@ -117,7 +114,7 @@ export default function DashboardPage() {
     return (
       <Layout>
         <div className="flex items-center justify-center h-64">
-          <div className="w-12 h-12 rounded-full border-2 border-sky-500/30 border-t-sky-500 animate-spin"></div>
+          <div className="w-8 h-8 rounded-full border-2 border-zinc-700 border-t-blue-500 animate-spin"></div>
         </div>
       </Layout>
     );
@@ -131,10 +128,10 @@ export default function DashboardPage() {
     waste_score: 62,
     potentially_wasted_cents: 856800,
     equivalents: [
-      { label: "months of groceries", value: 1.1, emoji: "🛒" },
-      { label: "movie tickets", value: 17, emoji: "🎬" },
+      { label: "months of groceries", value: 1.1 },
+      { label: "movie tickets", value: 17 },
     ],
-    shock_stat: "That's 1.1 months of groceries just... gone.",
+    shock_stat: "That's 1.1 months of groceries worth of unused subscriptions.",
   };
 
   const demoTrialAlerts = [
@@ -173,14 +170,14 @@ export default function DashboardPage() {
   return (
     <Layout>
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-1">Dashboard</h1>
-          <p className="text-slate-400">
-            Welcome back{user?.email ? `, ${user.email.split("@")[0]}` : ""}!
+          <h1 className="text-2xl font-semibold text-zinc-100">Dashboard</h1>
+          <p className="text-zinc-500 text-sm">
+            Welcome back{user?.email ? `, ${user.email.split("@")[0]}` : ""}
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button
             onClick={handleSync}
             disabled={syncing}
@@ -203,63 +200,42 @@ export default function DashboardPage() {
       </div>
 
       {error && (
-        <div className="glass-card border-red-500/30 bg-red-500/10 text-red-400 px-4 py-3 mb-6">
+        <div className="card border-red-500/30 bg-red-500/10 text-red-400 px-4 py-3 mb-6">
           {error}
         </div>
       )}
 
-      {/* Shock Stats - Emotional UI */}
+      {/* Waste Summary */}
       {wasteStats.potentially_wasted_cents > 0 && (
-        <div className="glass-card border-red-500/20 mb-8 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-red-500/5 via-orange-500/5 to-red-500/5 animate-pulse"></div>
-          
-          <div className="relative z-10">
-            <div className="flex items-start gap-6">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-500/30 to-orange-500/20 flex items-center justify-center flex-shrink-0">
-                <Flame className="w-8 h-8 text-red-400 animate-pulse" />
-              </div>
-              
-              <div className="flex-1">
-                <p className="text-slate-400 text-sm mb-1">You're burning money on unused subscriptions</p>
-                <p className="text-4xl font-bold text-white mb-2">
-                  {formatCurrency(wasteStats.potentially_wasted_cents, "INR")}
-                  <span className="text-lg text-slate-500 font-normal">/year</span>
-                </p>
-                <p className="text-lg text-red-400 font-medium mb-4">
-                  {wasteStats.shock_stat}
-                </p>
-                
-                {wasteStats.equivalents.length > 0 && (
-                  <div className="flex flex-wrap gap-3">
-                    {wasteStats.equivalents.map((eq, i) => (
-                      <div key={i} className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm">
-                        <span className="mr-1">{eq.emoji}</span>
-                        <span className="text-white font-medium">{eq.value}</span>
-                        <span className="text-slate-400 ml-1">{eq.label}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-              
-              <div className="text-center">
-                <div className="relative w-24 h-24">
-                  <svg className="w-24 h-24 transform -rotate-90">
-                    <circle cx="48" cy="48" r="40" stroke="currentColor" strokeWidth="8" fill="none" className="text-slate-700" />
-                    <circle cx="48" cy="48" r="40" stroke="url(#waste-gradient)" strokeWidth="8" fill="none" strokeDasharray={`${(100 - wasteStats.waste_score) * 2.51} 251`} className="transition-all duration-1000" />
-                    <defs>
-                      <linearGradient id="waste-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#ef4444" />
-                        <stop offset="100%" stopColor="#f97316" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-2xl font-bold text-white">{wasteStats.waste_score}</span>
-                  </div>
+        <div className="card mb-6">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-zinc-500 text-sm mb-1">Potentially wasted on unused subscriptions</p>
+              <p className="text-3xl font-semibold text-zinc-100 mb-1">
+                {formatCurrency(wasteStats.potentially_wasted_cents, "INR")}
+                <span className="text-base text-zinc-500 font-normal">/year</span>
+              </p>
+              <p className="text-sm text-zinc-400 mb-4">
+                {wasteStats.shock_stat}
+              </p>
+
+              {wasteStats.equivalents.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {wasteStats.equivalents.map((eq, i) => (
+                    <div key={i} className="px-2 py-1 rounded bg-zinc-800 text-xs text-zinc-400">
+                      <span className="text-zinc-200 font-medium">{eq.value}</span>
+                      <span className="ml-1">{eq.label}</span>
+                    </div>
+                  ))}
                 </div>
-                <p className="text-xs text-slate-400 mt-2">Health Score</p>
+              )}
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-full border-4 border-zinc-700 flex items-center justify-center">
+                <span className="text-xl font-semibold text-zinc-100">{wasteStats.waste_score}</span>
               </div>
+              <p className="text-xs text-zinc-500 mt-1">Health Score</p>
             </div>
           </div>
         </div>
@@ -267,29 +243,24 @@ export default function DashboardPage() {
 
       {/* Intelligence Alerts Grid */}
       {(trialAlerts.length > 0 || priceChanges.length > 0 || overlaps.length > 0 || nonUsePredictions.length > 0) && (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           {/* Trial Alerts */}
           {trialAlerts.length > 0 && (
-            <div className="glass-card border-amber-500/30">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center">
-                  <Clock className="w-5 h-5 text-amber-400" />
-                </div>
-                <div>
-                  <p className="font-semibold text-white">Trial Ending</p>
-                  <p className="text-xs text-slate-400">{trialAlerts.length} trial(s) expiring</p>
-                </div>
+            <div className="card">
+              <div className="flex items-center gap-2 mb-3">
+                <Clock className="w-4 h-4 text-zinc-500" />
+                <p className="font-medium text-zinc-100 text-sm">Trial Ending</p>
               </div>
               {trialAlerts.slice(0, 2).map((trial) => (
-                <div key={trial.subscription_id} className={`p-3 rounded-lg mb-2 ${trial.is_urgent ? 'bg-red-500/10 border border-red-500/30' : 'bg-white/5'}`}>
+                <div key={trial.subscription_id} className="p-2 rounded bg-zinc-800 mb-2 last:mb-0">
                   <div className="flex justify-between items-center">
-                    <span className="text-white font-medium">{trial.vendor_name}</span>
-                    <span className={`text-sm font-bold ${trial.is_urgent ? 'text-red-400' : 'text-amber-400'}`}>
+                    <span className="text-zinc-200 text-sm">{trial.vendor_name}</span>
+                    <span className={`text-xs font-medium ${trial.is_urgent ? 'text-red-400' : 'text-amber-400'}`}>
                       {trial.days_remaining}d left
                     </span>
                   </div>
-                  <p className="text-xs text-slate-400 mt-1">
-                    Will charge {formatCurrency(trial.estimated_charge_cents, "INR")}
+                  <p className="text-xs text-zinc-500 mt-1">
+                    {formatCurrency(trial.estimated_charge_cents, "INR")}
                   </p>
                 </div>
               ))}
@@ -298,23 +269,18 @@ export default function DashboardPage() {
 
           {/* Price Hikes */}
           {priceChanges.length > 0 && (
-            <div className="glass-card border-red-500/30">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center">
-                  <TrendingUp className="w-5 h-5 text-red-400" />
-                </div>
-                <div>
-                  <p className="font-semibold text-white">Price Hikes</p>
-                  <p className="text-xs text-slate-400">{priceChanges.length} increase(s) detected</p>
-                </div>
+            <div className="card">
+              <div className="flex items-center gap-2 mb-3">
+                <TrendingUp className="w-4 h-4 text-zinc-500" />
+                <p className="font-medium text-zinc-100 text-sm">Price Increases</p>
               </div>
               {priceChanges.slice(0, 2).map((change) => (
-                <div key={change.subscription_id} className="p-3 rounded-lg mb-2 bg-red-500/10 border border-red-500/20">
+                <div key={change.subscription_id} className="p-2 rounded bg-zinc-800 mb-2 last:mb-0">
                   <div className="flex justify-between items-center">
-                    <span className="text-white font-medium">{change.vendor_name}</span>
-                    <span className="text-red-400 font-bold">+{change.change_percent}%</span>
+                    <span className="text-zinc-200 text-sm">{change.vendor_name}</span>
+                    <span className="text-red-400 text-xs font-medium">+{change.change_percent}%</span>
                   </div>
-                  <p className="text-xs text-slate-400 mt-1">
+                  <p className="text-xs text-zinc-500 mt-1">
                     {formatCurrency(change.old_amount_cents, "INR")} → {formatCurrency(change.new_amount_cents, "INR")}
                   </p>
                 </div>
@@ -324,23 +290,18 @@ export default function DashboardPage() {
 
           {/* Overlaps */}
           {overlaps.length > 0 && (
-            <div className="glass-card border-indigo-500/30">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center">
-                  <Layers className="w-5 h-5 text-indigo-400" />
-                </div>
-                <div>
-                  <p className="font-semibold text-white">Overlapping Tools</p>
-                  <p className="text-xs text-slate-400">{overlaps.length} category(s) found</p>
-                </div>
+            <div className="card">
+              <div className="flex items-center gap-2 mb-3">
+                <Layers className="w-4 h-4 text-zinc-500" />
+                <p className="font-medium text-zinc-100 text-sm">Overlapping</p>
               </div>
               {overlaps.slice(0, 2).map((overlap, i) => (
-                <div key={i} className="p-3 rounded-lg mb-2 bg-indigo-500/10 border border-indigo-500/20">
+                <div key={i} className="p-2 rounded bg-zinc-800 mb-2 last:mb-0">
                   <div className="flex justify-between items-center">
-                    <span className="text-white font-medium">{overlap.category}</span>
-                    <span className="text-indigo-400 font-bold">{overlap.subscriptions.length} tools</span>
+                    <span className="text-zinc-200 text-sm">{overlap.category}</span>
+                    <span className="text-zinc-400 text-xs">{overlap.subscriptions.length} tools</span>
                   </div>
-                  <p className="text-xs text-slate-400 mt-1">
+                  <p className="text-xs text-zinc-500 mt-1">
                     Save {formatCurrency(overlap.potential_savings_cents, "INR")}/mo
                   </p>
                 </div>
@@ -350,31 +311,26 @@ export default function DashboardPage() {
 
           {/* Non-Use Predictions */}
           {nonUsePredictions.length > 0 && (
-            <div className="glass-card border-purple-500/30">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
-                  <AlertTriangle className="w-5 h-5 text-purple-400" />
-                </div>
-                <div>
-                  <p className="font-semibold text-white">Likely Unused</p>
-                  <p className="text-xs text-slate-400">{nonUsePredictions.length} at risk</p>
-                </div>
+            <div className="card">
+              <div className="flex items-center gap-2 mb-3">
+                <AlertTriangle className="w-4 h-4 text-zinc-500" />
+                <p className="font-medium text-zinc-100 text-sm">Likely Unused</p>
               </div>
               {nonUsePredictions.slice(0, 2).map((pred) => (
-                <div key={pred.subscription_id} className="p-3 rounded-lg mb-2 bg-purple-500/10 border border-purple-500/20">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-white font-medium">{pred.vendor_name}</span>
-                    <span className={`text-sm font-bold ${pred.risk_level === 'high' ? 'text-red-400' : pred.risk_level === 'medium' ? 'text-amber-400' : 'text-purple-400'}`}>
+                <div key={pred.subscription_id} className="p-2 rounded bg-zinc-800 mb-2 last:mb-0">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-zinc-200 text-sm">{pred.vendor_name}</span>
+                    <span className={`text-xs font-medium ${pred.risk_level === 'high' ? 'text-red-400' : pred.risk_level === 'medium' ? 'text-amber-400' : 'text-zinc-400'}`}>
                       {pred.probability}%
                     </span>
                   </div>
-                  <div className="w-full bg-slate-700 rounded-full h-1.5 mb-2">
-                    <div 
-                      className={`h-1.5 rounded-full ${pred.risk_level === 'high' ? 'bg-red-500' : pred.risk_level === 'medium' ? 'bg-amber-500' : 'bg-purple-500'}`}
+                  <div className="w-full bg-zinc-700 rounded-full h-1 mb-1">
+                    <div
+                      className="h-1 rounded-full bg-zinc-500"
                       style={{ width: `${pred.probability}%` }}
                     />
                   </div>
-                  <p className="text-xs text-slate-400">{pred.reason}</p>
+                  <p className="text-xs text-zinc-500">{pred.reason}</p>
                 </div>
               ))}
             </div>
@@ -383,56 +339,56 @@ export default function DashboardPage() {
       )}
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-4 gap-4 mb-8">
-        <div className="gradient-card group hover:scale-[1.02] transition-transform duration-300">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-sky-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <CreditCard className="w-6 h-6 text-sky-400" />
+      <div className="grid grid-cols-4 gap-4 mb-6">
+        <div className="card">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg bg-zinc-800 flex items-center justify-center">
+              <CreditCard className="w-4 h-4 text-zinc-400" />
             </div>
             <div>
-              <p className="text-sm text-slate-400">Pending Actions</p>
-              <p className="text-2xl font-bold text-white">{stats?.pending_decisions || 0}</p>
+              <p className="text-xs text-zinc-500">Pending Actions</p>
+              <p className="text-xl font-semibold text-zinc-100">{stats?.pending_decisions || 0}</p>
             </div>
           </div>
         </div>
 
-        <div className="gradient-card group hover:scale-[1.02] transition-transform duration-300">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <CheckCircle2 className="w-6 h-6 text-emerald-400" />
+        <div className="card">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg bg-zinc-800 flex items-center justify-center">
+              <CheckCircle2 className="w-4 h-4 text-zinc-400" />
             </div>
             <div>
-              <p className="text-sm text-slate-400">Actions Taken</p>
-              <p className="text-2xl font-bold text-white">{stats?.accepted_decisions || 0}</p>
+              <p className="text-xs text-zinc-500">Actions Taken</p>
+              <p className="text-xl font-semibold text-zinc-100">{stats?.accepted_decisions || 0}</p>
             </div>
           </div>
         </div>
 
-        <div className="gradient-card group hover:scale-[1.02] transition-transform duration-300">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <TrendingDown className="w-6 h-6 text-amber-400" />
+        <div className="card">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg bg-zinc-800 flex items-center justify-center">
+              <TrendingDown className="w-4 h-4 text-zinc-400" />
             </div>
             <div>
-              <p className="text-sm text-slate-400">Potential Savings</p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-xs text-zinc-500">Potential Savings</p>
+              <p className="text-xl font-semibold text-zinc-100">
                 {formatCurrency(stats?.potential_savings_cents || 0)}
-                <span className="text-sm text-slate-500 font-normal">/mo</span>
+                <span className="text-sm text-zinc-500 font-normal">/mo</span>
               </p>
             </div>
           </div>
         </div>
 
-        <div className="gradient-card group hover:scale-[1.02] transition-transform duration-300">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <DollarSign className="w-6 h-6 text-green-400" />
+        <div className="card">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg bg-zinc-800 flex items-center justify-center">
+              <DollarSign className="w-4 h-4 text-zinc-400" />
             </div>
             <div>
-              <p className="text-sm text-slate-400">Actual Savings</p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-xs text-zinc-500">Actual Savings</p>
+              <p className="text-xl font-semibold text-zinc-100">
                 {formatCurrency(stats?.actual_savings_cents || 0)}
-                <span className="text-sm text-slate-500 font-normal">/mo</span>
+                <span className="text-sm text-zinc-500 font-normal">/mo</span>
               </p>
             </div>
           </div>
@@ -441,21 +397,20 @@ export default function DashboardPage() {
 
       {/* Action Feed */}
       <div className="mb-6">
-        <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-          <Zap className="w-5 h-5 text-amber-400" />
+        <h2 className="text-lg font-medium text-zinc-100 mb-4">
           Recommended Actions
         </h2>
 
         {decisions.length === 0 ? (
-          <div className="glass-card text-center py-16">
-            <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 flex items-center justify-center mx-auto mb-5">
-              <CheckCircle2 className="w-8 h-8 text-emerald-400" />
+          <div className="card text-center py-12">
+            <div className="w-10 h-10 rounded-lg bg-zinc-800 flex items-center justify-center mx-auto mb-3">
+              <CheckCircle2 className="w-5 h-5 text-zinc-400" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-2">All caught up!</h3>
-            <p className="text-slate-400 mb-6 max-w-md mx-auto">
+            <h3 className="text-lg font-medium text-zinc-100 mb-1">All caught up</h3>
+            <p className="text-zinc-500 text-sm mb-4 max-w-sm mx-auto">
               No pending recommendations. Sync your Gmail or generate new recommendations to get started.
             </p>
-            <div className="flex items-center justify-center gap-3">
+            <div className="flex items-center justify-center gap-2">
               <button onClick={handleSync} disabled={syncing} className="btn-secondary inline-flex items-center gap-2">
                 <RefreshCw className={`w-4 h-4 ${syncing ? "animate-spin" : ""}`} />
                 Sync Gmail
@@ -467,7 +422,7 @@ export default function DashboardPage() {
             </div>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {decisions.map((decision) => (
               <ActionCard key={decision.id} decision={decision} onAction={(action) => handleAction(decision.id, action)} />
             ))}

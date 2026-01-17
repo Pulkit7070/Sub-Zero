@@ -78,7 +78,7 @@ export default function SettingsPage() {
     return (
       <Layout>
         <div className="flex items-center justify-center h-64">
-          <div className="w-12 h-12 rounded-full border-2 border-sky-500/30 border-t-sky-500 animate-spin"></div>
+          <div className="w-8 h-8 rounded-full border-2 border-zinc-700 border-t-blue-500 animate-spin"></div>
         </div>
       </Layout>
     );
@@ -87,49 +87,47 @@ export default function SettingsPage() {
   return (
     <Layout>
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white">Settings</h1>
-        <p className="text-slate-400">Manage your account and preferences</p>
+      <div className="mb-6">
+        <h1 className="text-2xl font-semibold text-zinc-100">Settings</h1>
+        <p className="text-zinc-500 text-sm">Manage your account and preferences</p>
       </div>
 
       {error && (
-        <div className="glass-card border-red-500/30 bg-red-500/10 text-red-400 px-4 py-3 mb-6">
+        <div className="card border-red-500/30 bg-red-500/10 text-red-400 px-4 py-3 mb-6">
           {error}
         </div>
       )}
 
       {/* Account Section */}
-      <div className="glass-card mb-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 rounded-xl bg-sky-500/20 flex items-center justify-center">
-            <UserIcon className="w-6 h-6 text-sky-400" />
+      <div className="card mb-4">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-9 h-9 rounded-lg bg-zinc-800 flex items-center justify-center">
+            <UserIcon className="w-4 h-4 text-zinc-400" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-white">Account</h2>
-            <p className="text-sm text-slate-400">Your account information</p>
+            <h2 className="font-medium text-zinc-100">Account</h2>
+            <p className="text-xs text-zinc-500">Your account information</p>
           </div>
         </div>
 
-        <div className="space-y-4">
-          <div className="flex items-center justify-between py-3 border-b border-white/5">
+        <div className="space-y-3">
+          <div className="flex items-center justify-between py-2 border-b border-zinc-800">
             <div className="flex items-center gap-3">
-              <Mail className="w-5 h-5 text-slate-500" />
+              <Mail className="w-4 h-4 text-zinc-500" />
               <div>
-                <p className="text-sm font-medium text-white">Email</p>
-                <p className="text-sm text-slate-400">{user?.email}</p>
+                <p className="text-sm text-zinc-200">Email</p>
+                <p className="text-xs text-zinc-500">{user?.email}</p>
               </div>
             </div>
-            <CheckCircle className="w-5 h-5 text-emerald-400" />
+            <CheckCircle className="w-4 h-4 text-emerald-500" />
           </div>
 
-          <div className="flex items-center justify-between py-3">
+          <div className="flex items-center justify-between py-2">
             <div className="flex items-center gap-3">
-              <Calendar className="w-5 h-5 text-slate-500" />
+              <Calendar className="w-4 h-4 text-zinc-500" />
               <div>
-                <p className="text-sm font-medium text-white">
-                  Account Created
-                </p>
-                <p className="text-sm text-slate-400">
+                <p className="text-sm text-zinc-200">Account Created</p>
+                <p className="text-xs text-zinc-500">
                   {user?.created_at
                     ? new Date(user.created_at).toLocaleDateString("en-US", {
                         year: "numeric",
@@ -145,25 +143,21 @@ export default function SettingsPage() {
       </div>
 
       {/* Connected Accounts */}
-      <div className="glass-card mb-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center">
-            <Mail className="w-6 h-6 text-amber-400" />
+      <div className="card mb-4">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-9 h-9 rounded-lg bg-zinc-800 flex items-center justify-center">
+            <Mail className="w-4 h-4 text-zinc-400" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-white">
-              Connected Accounts
-            </h2>
-            <p className="text-sm text-slate-400">
-              Manage your connected services
-            </p>
+            <h2 className="font-medium text-zinc-100">Connected Accounts</h2>
+            <p className="text-xs text-zinc-500">Manage your connected services</p>
           </div>
         </div>
 
-        <div className="flex items-center justify-between py-4 px-4 bg-white/5 rounded-xl border border-white/10">
+        <div className="flex items-center justify-between p-3 bg-zinc-800 rounded-lg">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-              <svg className="w-5 h-5" viewBox="0 0 24 24">
+            <div className="w-8 h-8 bg-white rounded flex items-center justify-center">
+              <svg className="w-4 h-4" viewBox="0 0 24 24">
                 <path
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                   fill="#4285F4"
@@ -183,10 +177,8 @@ export default function SettingsPage() {
               </svg>
             </div>
             <div>
-              <p className="font-medium text-white">Gmail</p>
-              <p className="text-sm text-slate-400">
-                Connected as {user?.email}
-              </p>
+              <p className="text-sm text-zinc-200">Gmail</p>
+              <p className="text-xs text-zinc-500">Connected as {user?.email}</p>
             </div>
           </div>
           <span className="badge-success inline-flex items-center gap-1">
@@ -197,61 +189,54 @@ export default function SettingsPage() {
       </div>
 
       {/* Privacy & Data */}
-      <div className="glass-card mb-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-            <Shield className="w-6 h-6 text-emerald-400" />
+      <div className="card mb-4">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-9 h-9 rounded-lg bg-zinc-800 flex items-center justify-center">
+            <Shield className="w-4 h-4 text-zinc-400" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-white">
-              Privacy & Data
-            </h2>
-            <p className="text-sm text-slate-400">How we handle your data</p>
+            <h2 className="font-medium text-zinc-100">Privacy & Data</h2>
+            <p className="text-xs text-zinc-500">How we handle your data</p>
           </div>
         </div>
 
-        <div className="space-y-4 text-sm text-slate-300">
-          <div className="flex items-start gap-3">
-            <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-            <p>
-              We only read emails that look like receipts or invoices. We never
-              read your personal messages.
-            </p>
+        <div className="space-y-3 text-sm text-zinc-400">
+          <div className="flex items-start gap-2">
+            <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+            <p>We only read emails that look like receipts or invoices. We never read your personal messages.</p>
           </div>
-          <div className="flex items-start gap-3">
-            <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+          <div className="flex items-start gap-2">
+            <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
             <p>Your OAuth tokens are encrypted at rest using AES-256.</p>
           </div>
-          <div className="flex items-start gap-3">
-            <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+          <div className="flex items-start gap-2">
+            <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
             <p>We never share your data with third parties.</p>
           </div>
-          <div className="flex items-start gap-3">
-            <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+          <div className="flex items-start gap-2">
+            <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
             <p>You can delete all your data at any time by disconnecting.</p>
           </div>
         </div>
       </div>
 
       {/* Danger Zone */}
-      <div className="glass-card border-red-500/30">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center">
-            <AlertTriangle className="w-6 h-6 text-red-400" />
+      <div className="card border-red-500/20">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-9 h-9 rounded-lg bg-zinc-800 flex items-center justify-center">
+            <AlertTriangle className="w-4 h-4 text-zinc-400" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-white">Danger Zone</h2>
-            <p className="text-sm text-slate-400">Irreversible actions</p>
+            <h2 className="font-medium text-zinc-100">Danger Zone</h2>
+            <p className="text-xs text-zinc-500">Irreversible actions</p>
           </div>
         </div>
 
-        <div className="space-y-4">
-          <div className="flex items-center justify-between py-3 border-b border-white/5">
+        <div className="space-y-3">
+          <div className="flex items-center justify-between py-2 border-b border-zinc-800">
             <div>
-              <p className="font-medium text-white">Log Out</p>
-              <p className="text-sm text-slate-400">
-                Sign out of your account on this device
-              </p>
+              <p className="text-sm text-zinc-200">Log Out</p>
+              <p className="text-xs text-zinc-500">Sign out of your account on this device</p>
             </div>
             <button
               onClick={handleLogout}
@@ -262,12 +247,10 @@ export default function SettingsPage() {
             </button>
           </div>
 
-          <div className="flex items-center justify-between py-3">
+          <div className="flex items-center justify-between py-2">
             <div>
-              <p className="font-medium text-white">Disconnect Account</p>
-              <p className="text-sm text-slate-400">
-                Remove Gmail connection and delete all data
-              </p>
+              <p className="text-sm text-zinc-200">Disconnect Account</p>
+              <p className="text-xs text-zinc-500">Remove Gmail connection and delete all data</p>
             </div>
             <button
               onClick={handleDisconnect}
