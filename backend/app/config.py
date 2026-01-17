@@ -35,6 +35,9 @@ class Settings(BaseSettings):
         "https://www.googleapis.com/auth/userinfo.email",
         "https://www.googleapis.com/auth/userinfo.profile",
     ]
+    
+    # Gemini API
+    gemini_api_key: str
 
     class Config:
         env_file = ".env"

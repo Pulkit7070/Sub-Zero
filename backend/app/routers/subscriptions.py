@@ -358,6 +358,7 @@ async def sync_subscriptions(
                         currency = :currency,
                         billing_cycle = COALESCE(:billing_cycle, billing_cycle),
                         last_charge_at = GREATEST(last_charge_at, :charge_date),
+                        next_renewal_at = COALESCE(:next_renewal_date, next_renewal_at),
                         confidence = GREATEST(confidence, :confidence),
                         raw_data = :raw_data,
                         updated_at = NOW()
@@ -369,6 +370,7 @@ async def sync_subscriptions(
                         "currency": sub.currency,
                         "billing_cycle": sub.billing_cycle,
                         "charge_date": sub.charge_date,
+                        "next_renewal_date": sub.next_renewal_date,
                         "confidence": sub.confidence,
                         "raw_data": json.dumps(sub.raw_data) if sub.raw_data else None,
                     },
@@ -380,11 +382,11 @@ async def sync_subscriptions(
                     text("""
                     INSERT INTO subscriptions (
                         user_id, vendor_name, vendor_normalized, amount_cents,
-                        currency, billing_cycle, last_charge_at, source,
+                        currency, billing_cycle, last_charge_at, next_renewal_at, source,
                         confidence, raw_data
                     ) VALUES (
                         :user_id, :vendor_name, :vendor_normalized, :amount_cents,
-                        :currency, :billing_cycle, :charge_date, 'gmail',
+                        :currency, :billing_cycle, :charge_date, :next_renewal_date, 'gmail',
                         :confidence, :raw_data
                     )
                     """),
@@ -396,6 +398,7 @@ async def sync_subscriptions(
                         "currency": sub.currency,
                         "billing_cycle": sub.billing_cycle,
                         "charge_date": sub.charge_date,
+                        "next_renewal_date": sub.next_renewal_date,
                         "confidence": sub.confidence,
                         "raw_data": json.dumps(sub.raw_data) if sub.raw_data else None,
                     },

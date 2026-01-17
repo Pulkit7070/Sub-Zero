@@ -221,6 +221,25 @@ export const api = {
     const response = await fetchWithAuth("/intelligence/stats");
     return response.json();
   },
+
+  // LLM
+  generateRiskExplanation: async (probability: number, reasons: string[]): Promise<string> => {
+    const response = await fetchWithAuth("/llm/risk-explain", {
+      method: "POST",
+      body: JSON.stringify({ probability, reasons }),
+    });
+    const data = await response.json();
+    return data.text;
+  },
+
+  generateFinalSummary: async (savings: number, count: number, alertsAvoided: number): Promise<string> => {
+    const response = await fetchWithAuth("/llm/final-summary", {
+      method: "POST",
+      body: JSON.stringify({ savings, count, alerts_avoided: alertsAvoided }),
+    });
+    const data = await response.json();
+    return data.text;
+  },
 };
 
 export function formatCurrency(cents: number | null, currency: string = "USD"): string {
