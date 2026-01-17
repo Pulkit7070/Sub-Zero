@@ -414,7 +414,7 @@ async def get_intelligence_stats(
         SELECT d.subscription_id, d.decision_type, s.amount_cents, s.vendor_name
         FROM decisions d
         JOIN subscriptions s ON d.subscription_id = s.id
-        WHERE d.user_id = :user_id AND d.user_action IS NULL
+        WHERE s.user_id = :user_id AND d.user_action IS NULL
         """),
         {"user_id": str(user_id)},
     )

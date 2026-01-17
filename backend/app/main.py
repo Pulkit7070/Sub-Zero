@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
 from app.database import init_db
-from app.routers import auth, subscriptions, decisions, intelligence
+from app.routers import auth, subscriptions, decisions, intelligence, llm
 from app.routers.enterprise import (
     organizations_router,
     users_router,
@@ -52,6 +52,7 @@ app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 app.include_router(subscriptions.router, prefix="/subscriptions", tags=["Subscriptions"])
 app.include_router(decisions.router, prefix="/decisions", tags=["Decisions"])
 app.include_router(intelligence.router, prefix="/intelligence", tags=["Intelligence"])
+app.include_router(llm.router, prefix="/llm", tags=["LLM"])
 
 # Include routers - Enterprise Platform
 app.include_router(organizations_router, prefix="/api/v1", tags=["Organizations"])
