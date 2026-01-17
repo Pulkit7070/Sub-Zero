@@ -38,6 +38,7 @@ export interface SaaSTool {
   normalized_name: string;
   category?: string;
   vendor_domain?: string;
+  vendor_url?: string;
   logo_url?: string;
   description?: string;
   status: string;
@@ -85,6 +86,7 @@ export interface Decision {
   risk_score: number;
   savings_potential_cents: number;
   recommended_seats?: number;
+  current_seats?: number;
   explanation?: string;
   factors?: any[];
   status: string;

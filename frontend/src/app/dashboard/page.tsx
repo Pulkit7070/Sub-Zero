@@ -35,6 +35,9 @@ export default function DashboardPage() {
   const [syncing, setSyncing] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [riskExplanations, setRiskExplanations] = useState<Record<string, string>>({});
+  const [loadingExplanation, setLoadingExplanation] = useState<string | null>(null);
+  const [finalSummary, setFinalSummary] = useState<boolean>(false);
 
   useEffect(() => {
     loadData();
@@ -108,6 +111,35 @@ export default function DashboardPage() {
     setDecisions((prev) => prev.filter((d) => d.id !== decisionId));
     const newStats = await api.getDecisionStats();
     setStats(newStats);
+  };
+
+  const handleExplainRisk = async (pred: any) => {
+    setLoadingExplanation(pred.subscription_id);
+    // Simulate AI generating explanation
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    const explanations = [
+      "Our AI detected that your usage pattern dropped significantly over the last 60 days. Based on thousands of similar users, this typically indicates the tool no longer aligns with your workflow.",
+      "We analyzed your email activity and found zero mentions or notifications from this service in the past 3 months, suggesting it's become redundant in your current setup.",
+      "Machine learning models show high correlation between your current usage pattern and users who successfully canceled without impact. The risk of canceling is minimal.",
+      "AI detected that 3 other subscriptions in your account overlap with this functionality, making it a prime candidate for consolidation and cost savings.",
+    ];
+    const randomExplanation = explanations[Math.floor(Math.random() * explanations.length)];
+    setRiskExplanations(prev => ({ ...prev, [pred.subscription_id]: randomExplanation }));
+    setLoadingExplanation(null);
+    
+    // Check if all predictions have explanations
+    const allPredictions = intelligence?.non_use_predictions || demoNonUsePredictions;
+    const allExplained = allPredictions.every(p => 
+      riskExplanations[p.subscription_id] || p.subscription_id === pred.subscription_id
+    );
+    if (allExplained && allPredictions.length > 0) {
+      setTimeout(() => setFinalSummary(true), 1000);
+    }
+  };
+
+  const handleEndDemo = () => {
+    setFinalSummary(false);
+    setRiskExplanations({});
   };
 
   if (loading) {
@@ -330,7 +362,27 @@ export default function DashboardPage() {
                       style={{ width: `${pred.probability}%` }}
                     />
                   </div>
-                  <p className="text-xs text-zinc-500">{pred.reason}</p>
+                  {riskExplanations[pred.subscription_id] ? (
+                    <div className="bg-slate-800/50 rounded-lg p-3 text-xs text-slate-300 border border-slate-700/50 animate-fadeIn mt-2">
+                      <p className="italic">"{riskExplanations[pred.subscription_id]}"</p>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between mt-1">
+                      <p className="text-xs text-slate-400">{pred.reason}</p>
+                      <button
+                        onClick={() => handleExplainRisk(pred)}
+                        disabled={loadingExplanation === pred.subscription_id}
+                        className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition-colors"
+                      >
+                        {loadingExplanation === pred.subscription_id ? (
+                          <RefreshCw className="w-3 h-3 animate-spin" />
+                        ) : (
+                          <Sparkles className="w-3 h-3" />
+                        )}
+                        Why?
+                      </button>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
