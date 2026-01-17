@@ -26,6 +26,7 @@ import {
   User,
   IntelligenceStats,
   formatCurrency,
+  NonUsePrediction,
 } from "@/lib/api";
 
 export default function DashboardPage() {
@@ -34,6 +35,10 @@ export default function DashboardPage() {
   const [decisions, setDecisions] = useState<Decision[]>([]);
   const [stats, setStats] = useState<DecisionStats | null>(null);
   const [intelligence, setIntelligence] = useState<IntelligenceStats | null>(null);
+  const [riskExplanations, setRiskExplanations] = useState<Record<string, string>>({});
+  const [loadingExplanation, setLoadingExplanation] = useState<string | null>(null);
+  const [finalSummary, setFinalSummary] = useState<string | null>(null);
+  const [loadingSummary, setLoadingSummary] = useState(false);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [generating, setGenerating] = useState(false);
@@ -49,14 +54,19 @@ export default function DashboardPage() {
       setError(null);
 
       const [userData, decisionsData, statsData, intelligenceData] = await Promise.all([
-        api.getCurrentUser(),
-        api.getDecisions(true),
-        api.getDecisionStats(),
+        api.getCurrentUser().catch(() => null),
+        api.getDecisions(true).catch(() => []),
+        api.getDecisionStats().catch(() => ({
+          pending_decisions: 0,
+          accepted_decisions: 0,
+          potential_savings_cents: 0,
+          actual_savings_cents: 0,
+        })),
         api.getIntelligenceStats().catch(() => null),
       ]);
 
-      setUser(userData);
-      setDecisions(decisionsData);
+      if (userData) setUser(userData);
+      setDecisions(decisionsData || []);
       setStats(statsData);
       setIntelligence(intelligenceData);
     } catch (err) {
@@ -85,6 +95,43 @@ export default function DashboardPage() {
       setError("Failed to sync subscriptions. Please try again.");
     } finally {
       setSyncing(false);
+    }
+  };
+
+  const handleExplainRisk = async (prediction: NonUsePrediction) => {
+    if (riskExplanations[prediction.subscription_id]) return;
+    
+    try {
+      setLoadingExplanation(prediction.subscription_id);
+      const explanation = await api.generateRiskExplanation(
+        prediction.probability,
+        [prediction.reason, `Inactive for ${prediction.days_inactive} days`]
+      );
+      setRiskExplanations(prev => ({
+        ...prev,
+        [prediction.subscription_id]: explanation
+      }));
+    } catch (err) {
+      console.error("Failed to generate explanation:", err);
+    } finally {
+      setLoadingExplanation(null);
+    }
+  };
+
+  const handleEndDemo = async () => {
+    if (!stats) return;
+    try {
+      setLoadingSummary(true);
+      const summary = await api.generateFinalSummary(
+        stats.potential_savings_cents,
+        stats.pending_decisions,
+        (intelligence?.trial_alerts.length || 0) + (intelligence?.price_changes.length || 0)
+      );
+      setFinalSummary(summary);
+    } catch (err) {
+      console.error("Failed to generate summary:", err);
+    } finally {
+      setLoadingSummary(false);
     }
   };
 
@@ -374,7 +421,27 @@ export default function DashboardPage() {
                       style={{ width: `${pred.probability}%` }}
                     />
                   </div>
-                  <p className="text-xs text-slate-400">{pred.reason}</p>
+                  {riskExplanations[pred.subscription_id] ? (
+                    <div className="bg-slate-800/50 rounded-lg p-3 text-xs text-slate-300 border border-slate-700/50 animate-fadeIn mt-2">
+                      <p className="italic">"{riskExplanations[pred.subscription_id]}"</p>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between mt-1">
+                      <p className="text-xs text-slate-400">{pred.reason}</p>
+                      <button
+                        onClick={() => handleExplainRisk(pred)}
+                        disabled={loadingExplanation === pred.subscription_id}
+                        className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition-colors"
+                      >
+                        {loadingExplanation === pred.subscription_id ? (
+                          <RefreshCw className="w-3 h-3 animate-spin" />
+                        ) : (
+                          <Sparkles className="w-3 h-3" />
+                        )}
+                        Why?
+                      </button>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -473,6 +540,44 @@ export default function DashboardPage() {
             ))}
           </div>
         )}
+      </div>
+
+      {/* Final Summary Modal */}
+      {finalSummary && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-slate-900 border border-white/10 rounded-2xl p-8 max-w-lg w-full relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-pink-500/10"></div>
+            
+            <div className="relative z-10 text-center">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center mx-auto mb-6 shadow-lg shadow-indigo-500/20">
+                <Sparkles className="w-8 h-8 text-white" />
+              </div>
+              
+              <h3 className="text-2xl font-bold text-white mb-4">You're in Control</h3>
+              <p className="text-lg text-slate-300 leading-relaxed mb-8">
+                "{finalSummary}"
+              </p>
+              
+              <button
+                onClick={() => setFinalSummary(null)}
+                className="px-8 py-3 bg-white text-slate-900 rounded-xl font-medium hover:bg-slate-100 transition-colors"
+              >
+                Close Demo
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Hidden Demo Trigger */}
+      <div className="fixed bottom-4 right-4 opacity-0 hover:opacity-100 transition-opacity">
+        <button 
+          onClick={handleEndDemo}
+          disabled={loadingSummary}
+          className="bg-slate-800 text-slate-500 text-xs px-2 py-1 rounded"
+        >
+          End Demo
+        </button>
       </div>
     </Layout>
   );
