@@ -57,6 +57,69 @@ export interface DecisionStats {
   actual_savings_cents: number;
 }
 
+export interface WasteEquivalent {
+  label: string;
+  value: number;
+  emoji: string;
+}
+
+export interface WasteStats {
+  annual_total_cents: number;
+  monthly_avg_cents: number;
+  waste_score: number;
+  potentially_wasted_cents: number;
+  equivalents: WasteEquivalent[];
+  shock_stat: string;
+}
+
+export interface PriceChange {
+  subscription_id: string;
+  vendor_name: string;
+  old_amount_cents: number;
+  new_amount_cents: number;
+  change_percent: number;
+  detected_at: string;
+}
+
+export interface TrialAlert {
+  subscription_id: string;
+  vendor_name: string;
+  trial_started_at: string;
+  days_remaining: number;
+  is_urgent: boolean;
+  estimated_charge_cents: number;
+}
+
+export interface OverlapGroup {
+  category: string;
+  subscriptions: Array<{
+    id: string;
+    vendor_name: string;
+    amount_cents: number;
+    billing_cycle: string;
+  }>;
+  combined_monthly_cents: number;
+  potential_savings_cents: number;
+}
+
+export interface NonUsePrediction {
+  subscription_id: string;
+  vendor_name: string;
+  probability: number;
+  risk_level: "low" | "medium" | "high";
+  reason: string;
+  days_inactive: number;
+  amount_cents: number;
+}
+
+export interface IntelligenceStats {
+  waste_stats: WasteStats;
+  price_changes: PriceChange[];
+  trial_alerts: TrialAlert[];
+  overlaps: OverlapGroup[];
+  non_use_predictions: NonUsePrediction[];
+}
+
 class ApiError extends Error {
   constructor(
     public status: number,
@@ -150,6 +213,12 @@ export const api = {
 
   getDecisionStats: async (): Promise<DecisionStats> => {
     const response = await fetchWithAuth("/decisions/summary/stats");
+    return response.json();
+  },
+
+  // Intelligence
+  getIntelligenceStats: async (): Promise<IntelligenceStats> => {
+    const response = await fetchWithAuth("/intelligence/stats");
     return response.json();
   },
 };
