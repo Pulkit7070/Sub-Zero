@@ -16,6 +16,7 @@ class ParsedSubscription:
     currency: str
     billing_cycle: Optional[str]
     charge_date: Optional[datetime]
+    next_renewal_date: Optional[datetime]
     confidence: float
     raw_data: dict
 
@@ -67,6 +68,22 @@ class EmailParser:
         "digitalocean": "DigitalOcean",
         "aws": "AWS",
         "cloudflare": "Cloudflare",
+        "hotstar": "Disney+ Hotstar",
+        "zee5": "ZEE5",
+        "sony": "Sony LIV",
+        "jio": "Jio Cinema",
+        "swiggy": "Swiggy One",
+        "zomato": "Zomato Gold",
+        "rapido": "Rapido",
+        "uber": "Uber",
+        "ola": "Ola",
+        "tataneu": "Tata Neu",
+        "cult": "Cult.fit",
+        "itunes": "iTunes",
+        "apple": "Apple",
+        "mlh": "Major League Hacking",
+        "gonature": "Go Nature",
+        "rapido": "Rapido",
     }
 
     # Currency symbols and codes
@@ -76,6 +93,8 @@ class EmailParser:
         "£": "GBP",
         "¥": "JPY",
         "₹": "INR",
+        "rs.": "INR",
+        "inr": "INR",
         "USD": "USD",
         "EUR": "EUR",
         "GBP": "GBP",
@@ -88,19 +107,38 @@ class EmailParser:
     # Amount patterns
     AMOUNT_PATTERNS = [
         # $XX.XX or $ XX.XX
-        r'[\$€£]\s*(\d{1,6}(?:[.,]\d{2})?)',
+        r'[\$€£₹]\s*(\d{1,7}(?:[.,]\d{2,3})?)',
+        # Rs. XX.XX
+        r'rs\.?\s*(\d{1,7}(?:[.,]\d{2,3})?)',
         # XX.XX USD/EUR/etc
-        r'(\d{1,6}(?:[.,]\d{2})?)\s*(?:USD|EUR|GBP|CAD|AUD)',
+        r'(\d{1,7}(?:[.,]\d{2,3})?)\s*(?:USD|EUR|GBP|CAD|AUD|INR)',
         # Total: $XX.XX
-        r'(?:total|amount|charged?|paid?|price)[\s:]*[\$€£]?\s*(\d{1,6}(?:[.,]\d{2})?)',
+        r'(?:total|amount|charged?|paid?|price|payable|received)[\s:]*[\$€£₹]?\s*(\d{1,7}(?:[.,]\d{2,3})?)',
+        # Total amount: ₹ XX
+        # Total amount: ₹ XX
+        r'total\s+amount[:\s]*[\$€£₹]?\s*(\d{1,7}(?:[.,]\d{2,3})?)',
+        # Order Total: Rs. XX
+        r'order\s+total[:\s]*[\$€£₹rs\.]*\s*(\d{1,7}(?:[.,]\d{2,3})?)',
+        # Grand Total: XX
+        r'grand\s+total[:\s]*[\$€£₹rs\.]*\s*(\d{1,7}(?:[.,]\d{2,3})?)',
+        # Billed To ... Total ... XX
+        r'total[:\s]*[\$€£₹rs\.]*\s*(\d{1,7}(?:[.,]\d{2,3})?)',
+    ]
+
+    # Date patterns for next renewal
+    RENEWAL_PATTERNS = [
+        r'next (?:payment|billing|charge|renewal) (?:is|will be)? (?:on|due)?\s*(?:on)?\s*(\w+ \d{1,2},? \d{4})',  # Jan 25, 2024
+        r'renews (?:on)?\s*(\w+ \d{1,2},? \d{4})',
+        r'valid (?:until|till)\s*(\w+ \d{1,2},? \d{4})',
+        r'expires (?:on)?\s*(\w+ \d{1,2},? \d{4})',
     ]
 
     # Billing cycle patterns
     BILLING_PATTERNS = {
-        "monthly": [r'monthly', r'per month', r'/month', r'/mo', r'each month'],
-        "yearly": [r'yearly', r'annual', r'per year', r'/year', r'/yr', r'each year'],
+        "monthly": [r'monthly', r'per month', r'/month', r'/mo', r'each month', r'every month', r'billed month'],
+        "yearly": [r'yearly', r'annual', r'per year', r'/year', r'/yr', r'each year', r'every year', r'billed year', r'12 months'],
         "weekly": [r'weekly', r'per week', r'/week', r'/wk'],
-        "quarterly": [r'quarterly', r'per quarter', r'every 3 months'],
+        "quarterly": [r'quarterly', r'per quarter', r'every 3 months', r'3 months'],
     }
 
     def parse_email(self, email_data: dict) -> Optional[ParsedSubscription]:
@@ -140,6 +178,9 @@ class EmailParser:
         # Extract billing cycle
         billing_cycle = self._extract_billing_cycle(combined_text)
 
+        # Extract next renewal date
+        renewal_date = self._extract_renewal_date(combined_text)
+
         # Calculate confidence score
         confidence = self._calculate_confidence(
             vendor_name=vendor_name,
@@ -155,6 +196,7 @@ class EmailParser:
             currency=currency,
             billing_cycle=billing_cycle,
             charge_date=date,
+            next_renewal_date=renewal_date,
             confidence=confidence,
             raw_data={
                 "from": from_email,
@@ -244,10 +286,11 @@ class EmailParser:
     def _extract_amount(self, text: str) -> tuple[Optional[int], str]:
         """Extract amount from email text."""
         currency = "USD"  # Default
+        text_lower = text.lower()
 
         # Detect currency
         for symbol, curr in self.CURRENCY_MAP.items():
-            if symbol in text:
+            if symbol in text_lower:
                 currency = curr
                 break
 
@@ -258,12 +301,14 @@ class EmailParser:
                 # Get the first reasonable amount
                 for match in matches:
                     try:
-                        # Handle comma as decimal separator
-                        amount_str = match.replace(',', '.')
+                        # Handle comma as decimal separator (if not INR-style grouping)
+                        # In many European countries, 1.234,56 means 1234.56
+                        # In India, 12,345.67 means 12345.67
+                        amount_str = match.replace(',', '')  # Remove all commas (common in US/India)
                         amount = float(amount_str)
 
-                        # Sanity check: between $0.99 and $10,000
-                        if 0.99 <= amount <= 10000:
+                        # Sanity check: between 0 and 1,000,000 (INR 10 Lakhs is reasonable)
+                        if 0 <= amount <= 1000000:
                             return int(amount * 100), currency
                     except ValueError:
                         continue
@@ -279,6 +324,25 @@ class EmailParser:
                 if re.search(pattern, text_lower):
                     return cycle
 
+        return None
+
+    def _extract_renewal_date(self, text: str) -> Optional[datetime]:
+        """Extract next renewal date from text."""
+        try:
+            for pattern in self.RENEWAL_PATTERNS:
+                match = re.search(pattern, text, re.IGNORECASE)
+                if match:
+                    date_str = match.group(1)
+                    # Try parsing common formats
+                    for fmt in ["%b %d, %Y", "%B %d, %Y", "%d %b %Y", "%d %B %Y"]:
+                        try:
+                            # Normalize string (remove ordinal suffix like 1st, 2nd)
+                            clean_date = re.sub(r'(\d+)(st|nd|rd|th)', r'\1', date_str)
+                            return datetime.strptime(clean_date, fmt)
+                        except ValueError:
+                            continue
+        except Exception:
+            pass
         return None
 
     def _has_receipt_keywords(self, text: str) -> bool:
