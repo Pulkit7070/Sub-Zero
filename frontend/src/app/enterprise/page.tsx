@@ -83,7 +83,7 @@ export default function EnterpriseDashboard() {
           categoryBreakdown[category].tool_count += 1;
         });
         setCategorySpend(categoryBreakdown);
-        setPendingCount(demoData.decisions.length);
+        setPendingCount(demoData.decisions.filter(d => d.status === "pending").length);
         
         setLoading(false);
         return;

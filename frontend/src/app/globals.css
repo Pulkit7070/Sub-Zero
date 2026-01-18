@@ -1,9 +1,12 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@source "../components/**/*.tsx";
+@source "./**/*.tsx";
 
 body {
-  @apply bg-zinc-950 text-zinc-100 antialiased;
+  background-color: #09090b;
+  color: #f4f4f5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
 }
 
@@ -13,88 +16,195 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-zinc-900;
+  background-color: #18181b;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-zinc-700 rounded;
+  background-color: #3f3f46;
+  border-radius: 0.25rem;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-zinc-600;
+  background-color: #52525b;
 }
 
-@layer components {
-  .card {
-    @apply bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-xl p-6 
-           transition-all hover:border-zinc-700;
-  }
+.card {
+  background-color: rgba(24, 24, 27, 0.5);
+  backdrop-filter: blur(4px);
+  border: 1px solid #27272a;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  transition: all 0.15s ease;
+}
 
-  .glass-card {
-    @apply bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-xl p-6
-           transition-all hover:border-zinc-700;
-  }
+.card:hover {
+  border-color: #3f3f46;
+}
 
-  .gradient-card {
-    @apply bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-xl p-6
-           transition-all hover:border-zinc-700;
-  }
+.glass-card {
+  background-color: rgba(24, 24, 27, 0.5);
+  backdrop-filter: blur(4px);
+  border: 1px solid #27272a;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  transition: all 0.15s ease;
+}
 
-  .btn-primary {
-    @apply px-5 py-2.5 rounded-lg font-semibold text-white bg-blue-600
-           hover:bg-blue-500 active:scale-95 transition-all shadow-lg shadow-blue-500/20
-           disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
-  }
+.glass-card:hover {
+  border-color: #3f3f46;
+}
 
-  .btn-secondary {
-    @apply px-5 py-2.5 rounded-lg font-semibold text-zinc-300
-           bg-zinc-800 border border-zinc-700
-           hover:bg-zinc-700 hover:border-zinc-600 active:scale-95 transition-all
-           disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
-  }
+.gradient-card {
+  background-color: rgba(24, 24, 27, 0.5);
+  backdrop-filter: blur(4px);
+  border: 1px solid #27272a;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  transition: all 0.15s ease;
+}
 
-  .btn-danger {
-    @apply px-5 py-2.5 rounded-lg font-semibold text-white bg-red-600
-           hover:bg-red-500 active:scale-95 transition-all shadow-lg shadow-red-500/20
-           disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
-  }
+.gradient-card:hover {
+  border-color: #3f3f46;
+}
 
-  .input {
-    @apply w-full px-4 py-3 rounded-lg bg-zinc-900 border border-zinc-700
-           text-zinc-100 placeholder:text-zinc-500
-           focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all;
-  }
+.btn-primary {
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  color: white;
+  background-color: #2563eb;
+  box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.2);
+  transition: all 0.15s ease;
+}
 
-  .badge {
-    @apply px-3 py-1 rounded-lg text-xs font-semibold;
-  }
+.btn-primary:hover {
+  background-color: #3b82f6;
+}
 
-  .badge-success {
-    @apply badge bg-emerald-500/10 text-emerald-400 border border-emerald-500/20;
-  }
+.btn-primary:active {
+  transform: scale(0.95);
+}
 
-  .badge-warning {
-    @apply badge bg-amber-500/10 text-amber-400 border border-amber-500/20;
-  }
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
-  .badge-danger {
-    @apply badge bg-red-500/10 text-red-400 border border-red-500/20;
+.btn-primary:disabled:active {
+  transform: scale(1);
+}
+
+.btn-secondary {
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  color: #d4d4d8;
+  background-color: #27272a;
+  border: 1px solid #3f3f46;
+  transition: all 0.15s ease;
+}
+
+.btn-secondary:hover {
+  background-color: #3f3f46;
+  border-color: #52525b;
+}
+
+.btn-secondary:active {
+  transform: scale(0.95);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary:disabled:active {
+  transform: scale(1);
+}
+
+.btn-danger {
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  color: white;
+  background-color: #dc2626;
+  box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.2);
+  transition: all 0.15s ease;
+}
+
+.btn-danger:hover {
+  background-color: #ef4444;
+}
+
+.btn-danger:active {
+  transform: scale(0.95);
+}
+
+.btn-danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-danger:disabled:active {
+  transform: scale(1);
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background-color: #18181b;
+  border: 1px solid #3f3f46;
+  color: #f4f4f5;
+  transition: all 0.15s ease;
+}
+
+.input::placeholder {
+  color: #71717a;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-success {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.badge-warning {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.badge-danger {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-@layer utilities {
-  .animate-fadeIn {
-    animation: fadeIn 0.5s ease-in;
-  }
-  
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(-4px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-in;
 }

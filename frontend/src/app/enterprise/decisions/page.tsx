@@ -110,20 +110,20 @@ export default function DecisionsPage() {
     try {
       setAnalyzing(true);
       
-      if (USE_DEMO_DATA) {
-        // Simulate analysis with demo data
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        const demoData = useDemoData();
-        alert(`Analysis complete! Created ${demoData.decisions.length} decision recommendations.\n\n` +
-              `💡 Quick Wins Found:\n` +
-              `• Reduce Slack licenses: Save $1,920/month\n` +
-              `• Cancel unused Figma seats: Save $1,440/month\n` +
-              `• Downgrade Zoom plan: Save $950/month\n\n` +
-              `Total Potential Savings: $${(demoData.stats.potential_savings_cents / 100).toLocaleString()}/month`);
-        loadDecisions();
-        setAnalyzing(false);
-        return;
-      }
+      // if (USE_DEMO_DATA) {
+      //   // Simulate analysis with demo data
+      //   await new Promise(resolve => setTimeout(resolve, 2000));
+      //   const demoData = useDemoData();
+      //   alert(`Analysis complete! Created ${demoData.decisions.length} decision recommendations.\n\n` +
+      //         `💡 Quick Wins Found:\n` +
+      //         `• Reduce Slack licenses: Save $1,920/month\n` +
+      //         `• Cancel unused Figma seats: Save $1,440/month\n` +
+      //         `• Downgrade Zoom plan: Save $950/month\n\n` +
+      //         `Total Potential Savings: $${(demoData.stats.potential_savings_cents / 100).toLocaleString()}/month`);
+      //   loadDecisions();
+      //   setAnalyzing(false);
+      //   return;
+      // }
       
       const result = await decisionsAPI.analyzeAll(ORG_ID);
       alert(`Analysis complete! Created ${result.decisions_created} decision recommendations.`);
