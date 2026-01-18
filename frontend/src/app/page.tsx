@@ -29,38 +29,38 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen">
-      <div className="max-w-5xl mx-auto px-6 py-8">
+      <div className="max-w-6xl mx-auto px-8 py-12">
         {/* Header */}
-        <header className="flex items-center justify-between mb-16">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
-              <Snowflake className="w-5 h-5 text-white" />
+        <header className="flex items-center justify-between mb-24">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+              <Snowflake className="w-6 h-6 text-white" />
             </div>
-            <span className="text-xl font-semibold text-zinc-100">Sub-Zero</span>
+            <span className="text-2xl font-semibold text-zinc-100">Sub-Zero</span>
           </div>
         </header>
 
         {/* Hero */}
-        <div className="text-center max-w-3xl mx-auto mb-20">
-          <h1 className="text-4xl md:text-5xl font-semibold mb-4 text-zinc-100">
+        <div className="text-center max-w-3xl mx-auto mb-24">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 text-zinc-100 leading-tight">
             Take control of your subscriptions
           </h1>
 
-          <p className="text-lg text-zinc-400 mb-8 max-w-xl mx-auto">
+          <p className="text-xl text-zinc-400 mb-12 max-w-2xl mx-auto leading-relaxed">
             Connect your Gmail to automatically discover all your subscriptions.
             Get smart recommendations and save money on services you don&apos;t use.
           </p>
 
           {/* Personal vs Enterprise Choice */}
-          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-8">
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-12">
             {/* Personal */}
-            <div className="card hover:border-blue-500/50 transition-all cursor-pointer group">
-              <div className="p-6">
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-4 mx-auto">
-                  <Mail className="w-6 h-6 text-white" />
+            <div className="card hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10 transition-all cursor-pointer group">
+              <div className="p-8">
+                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-6 mx-auto shadow-lg shadow-blue-500/30">
+                  <Mail className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-zinc-100 mb-2">Personal</h3>
-                <p className="text-zinc-400 text-sm mb-4">
+                <h3 className="text-2xl font-semibold text-zinc-100 mb-3">Personal</h3>
+                <p className="text-zinc-400 text-base mb-6 leading-relaxed">
                   Manage your personal subscriptions with AI-powered insights
                 </p>
                 <a
@@ -75,9 +75,9 @@ export default function LandingPage() {
             </div>
 
             {/* Enterprise */}
-            <div className="card hover:border-purple-500/50 transition-all cursor-pointer group">
-              <div className="p-6">
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center mb-4 mx-auto">
+            <div className="card hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10 transition-all cursor-pointer group">
+              <div className="p-8">
+                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center mb-6 mx-auto shadow-lg shadow-purple-500/30">
                   <Building2 className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-xl font-semibold text-zinc-100 mb-2">Enterprise</h3>

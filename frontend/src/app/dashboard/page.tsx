@@ -217,14 +217,14 @@ export default function DashboardPage() {
   return (
     <Layout>
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-10">
         <div>
-          <h1 className="text-2xl font-semibold text-zinc-100">Dashboard</h1>
-          <p className="text-zinc-500 text-sm">
+          <h1 className="text-3xl font-bold text-zinc-100 mb-2">Dashboard</h1>
+          <p className="text-zinc-400 text-base">
             Welcome back{user?.email ? `, ${user.email.split("@")[0]}` : ""}
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <button
             onClick={handleSync}
             disabled={syncing}
@@ -254,22 +254,22 @@ export default function DashboardPage() {
 
       {/* Waste Summary */}
       {wasteStats.potentially_wasted_cents > 0 && (
-        <div className="card mb-6">
+        <div className="card mb-8 p-8">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-zinc-500 text-sm mb-1">Potentially wasted on unused subscriptions</p>
-              <p className="text-3xl font-semibold text-zinc-100 mb-1">
+              <p className="text-zinc-400 text-base mb-3">Potentially wasted on unused subscriptions</p>
+              <p className="text-4xl font-bold text-zinc-100 mb-3">
                 {formatCurrency(wasteStats.potentially_wasted_cents, "INR")}
-                <span className="text-base text-zinc-500 font-normal">/year</span>
+                <span className="text-lg text-zinc-500 font-normal">/year</span>
               </p>
-              <p className="text-sm text-zinc-400 mb-4">
+              <p className="text-base text-zinc-400 mb-6">
                 {wasteStats.shock_stat}
               </p>
 
               {wasteStats.equivalents.length > 0 && (
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-3">
                   {wasteStats.equivalents.map((eq, i) => (
-                    <div key={i} className="px-2 py-1 rounded bg-zinc-800 text-xs text-zinc-400">
+                    <div key={i} className="px-4 py-2 rounded-lg bg-zinc-800 text-sm text-zinc-400">
                       <span className="text-zinc-200 font-medium">{eq.value}</span>
                       <span className="ml-1">{eq.label}</span>
                     </div>
@@ -279,10 +279,10 @@ export default function DashboardPage() {
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 rounded-full border-4 border-zinc-700 flex items-center justify-center">
-                <span className="text-xl font-semibold text-zinc-100">{wasteStats.waste_score}</span>
+              <div className="w-20 h-20 rounded-full border-4 border-zinc-700 flex items-center justify-center">
+                <span className="text-2xl font-bold text-zinc-100">{wasteStats.waste_score}</span>
               </div>
-              <p className="text-xs text-zinc-500 mt-1">Health Score</p>
+              <p className="text-sm text-zinc-400 mt-2">Health Score</p>
             </div>
           </div>
         </div>
@@ -290,16 +290,16 @@ export default function DashboardPage() {
 
       {/* Intelligence Alerts Grid */}
       {(trialAlerts.length > 0 || priceChanges.length > 0 || overlaps.length > 0 || nonUsePredictions.length > 0) && (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {/* Trial Alerts */}
           {trialAlerts.length > 0 && (
-            <div className="card">
-              <div className="flex items-center gap-2 mb-3">
-                <Clock className="w-4 h-4 text-zinc-500" />
-                <p className="font-medium text-zinc-100 text-sm">Trial Ending</p>
+            <div className="card p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <Clock className="w-5 h-5 text-zinc-400" />
+                <p className="font-semibold text-zinc-100 text-base">Trial Ending</p>
               </div>
               {trialAlerts.slice(0, 2).map((trial) => (
-                <div key={trial.subscription_id} className="p-2 rounded bg-zinc-800 mb-2 last:mb-0">
+                <div key={trial.subscription_id} className="p-3 rounded-lg bg-zinc-800 mb-3 last:mb-0">
                   <div className="flex justify-between items-center">
                     <span className="text-zinc-200 text-sm">{trial.vendor_name}</span>
                     <span className={`text-xs font-medium ${trial.is_urgent ? 'text-red-400' : 'text-amber-400'}`}>
